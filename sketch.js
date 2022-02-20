@@ -23,11 +23,26 @@ let uprow = ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"];
 let midrow = ["A", "S", "D", "F", "G", "H", "J", "K", "L"];
 let bottomrow = ["ENTER", "Z", "X", "C", "V", "B", "N", "M", "ERASE"];
 
+let wordleBtn = document.querySelector(".wordleBtn");
+let hangBtn = document.querySelector(".hangBtn");
+
 window.addEventListener("load", () => {
   addingList(uprow, keyboard_up);
   addingList(midrow, keyboard_mid);
   addingList(bottomrow, keyboard_down);
   keyClicked();
+});
+
+wordleBtn.addEventListener("click", () => {
+  wordleBtn.classList.add("active");
+  hangBtn.classList.remove("active");
+  game.whichgame = "wordle";
+});
+
+hangBtn.addEventListener("click", () => {
+  hangBtn.classList.add("active");
+  wordleBtn.classList.remove("active");
+  game.whichgame = "hangman";
 });
 
 function addingList(givenArr, givenDiv) {
@@ -130,25 +145,35 @@ class Hangman {
     this.correctWord = correct;
     this.amount = amount;
     wid = 60 * amount + 5 * (amount + 1);
-    hei = 60 * 6 + 5 * 7 + 40;
+    hei = 60 * 6 + 5 * 7;
     this.letter = new Cell(40, hei / 2, 60);
     this.won = false;
     this.hearts = 3;
   }
 
   updating() {
+    this.hearts--;
+    let change = 0;
+    let given = document.querySelector(`.${this.letter.letter}`);
     for (let i = 0; i < this.correctWord.length; i++) {
       if (this.correctWord[i] === this.letter.letter) {
         game.letters[i].letter = this.letter.letter;
-        let given = document.querySelector(`.${this.letter.letter}`);
+
         game.letters[i].check = "Green";
-        if (given) given.classList.add("green");
+        given.classList.add("green");
+        game.checkwin();
+        change++;
       }
     }
-    this.hearts--;
+    if (change == 0) given.classList.add("gray");
     if (this.hearts == 0) this.won = true;
   }
 
+  cleaning() {
+    this.letter = new Cell(40, hei / 2, 60);
+    this.won = false;
+    this.hearts = 3;
+  }
   display() {
     this.letter.display();
     for (let i = 1; i <= this.hearts; i++) {
@@ -158,31 +183,7 @@ class Hangman {
   }
 }
 
-// function setup() {
-//   game = new Hangman("TIGER", numOfLettters);
-//   var myCanvas = createCanvas(wid, hei);
-//   myCanvas.parent("game");
-// }
-
-// function draw() {
-//   background(255);
-//   game.display();
-// }
-
-// function keyPressed() {
-//   if (!game.won) {
-//     if (isAlpha(key) && game.letter.letter == "") {
-//       game.letter.letter = key.toUpperCase();
-//     }
-//     if (keyCode == BACKSPACE && game.letter.letter != "") {
-//       game.letter.letter = "";
-//     }
-//     if (keyCode == ENTER && game.letter.letter != "") {
-//       game.updating();
-//       game.letter.letter = "";
-//     }
-//   }
-// }
+//Wordle part classes
 
 class Letter {
   constructor(posX, posY, cellWidth) {
@@ -274,6 +275,8 @@ class Word {
           if (answer[i] == this.word[i].letter) {
             nowlet.classList.add("green");
             this.word[i].check = "Green";
+            game.letters[i].letter = answer[i];
+            game.letters[i].check = "Green";
             countWin++;
           } else {
             nowlet.classList.add("yellow");
@@ -286,15 +289,7 @@ class Word {
         this.word[i].flag = true;
       }
       if (countWin == game.amount) {
-        setTimeout(function () {
-          deleteColor("green");
-          deleteColor("gray");
-          deleteColor("yellow");
-          game.wordnow++;
-          game = new Game(game.dataset, game.amount, game.wordnow);
-        }, 1000);
-
-        this.flag = false;
+        game.checkwin();
       }
     }
   }
@@ -313,7 +308,7 @@ class Wordle {
     this.words = this.creatingRows();
     this.won = false;
     wid = 60 * amount + 5 * (amount + 1);
-    hei = 60 * 6 + 5 * 7;
+    hei = 60 * 6 + 5 * 7 - 20;
   }
 
   creatingRows() {
@@ -324,6 +319,13 @@ class Wordle {
     return words;
   }
 
+  cleaning() {
+    this.current = 0;
+    this.rows = 4;
+    this.words = this.creatingRows();
+    this.won = false;
+  }
+
   display() {
     this.words.forEach((word) => {
       word.update(this.answer);
@@ -331,7 +333,6 @@ class Wordle {
     });
   }
 }
-
 
 //final game adding wordle and hangman
 
@@ -341,11 +342,30 @@ class Game {
     this.wordnow = wordnow;
     this.amount = amount;
     this.wordle = new Wordle(this.dataset[this.wordnow].toUpperCase(), amount);
-    this.Hangman = new Hangman(
+    this.hangman = new Hangman(
       this.dataset[this.wordnow].toUpperCase(),
       amount
     );
+    this.whichgame = "wordle";
     this.letters = this.creatingSlots();
+  }
+
+  checkwin() {
+    let count = 0;
+    this.letters.forEach((letter) => {
+      if (letter.letter != "") count++;
+    });
+    if (count == 5) {
+      deleteColor("green");
+      deleteColor("gray");
+      deleteColor("yellow");
+      this.wordnow++;
+      this.wordle.answer = this.dataset[this.wordnow].toUpperCase();
+      this.wordle.cleaning();
+      this.hangman.cleaning();
+      this.hangman.correctWord = this.dataset[this.wordnow].toUpperCase();
+      this.letters = this.creatingSlots();
+    }
   }
 
   creatingSlots() {
@@ -360,7 +380,8 @@ class Game {
     this.letters.forEach((letter) => {
       letter.display();
     });
-    this.wordle.display();
+    if (this.whichgame == "wordle") this.wordle.display();
+    else this.hangman.display();
   }
 }
 
@@ -369,6 +390,8 @@ let wordnow = 0;
 let loading = true;
 let dataset;
 let keyboardnow = "";
+let prevkey = "";
+let nowkey = "";
 
 function setup() {
   getwords().then((data) => {
@@ -386,43 +409,50 @@ function draw() {
 }
 
 function keyPressed() {
-  console.log(game.wordle.current);
-  if (game.wordle.current < game.wordle.rows && !game.wordle.won) {
-    if (
-      isAlpha(key) &&
-      game.wordle.words[game.wordle.current].current < game.wordle.amount
-    ) {
-      game.wordle.words[game.wordle.current].word[
-        game.wordle.words[game.wordle.current].current
-      ].letter = key.toUpperCase();
-      game.wordle.words[game.wordle.current].current++;
+  if (game.whichgame == "wordle") {
+    if (game.wordle.current < game.wordle.rows && !game.wordle.won) {
+      if (
+        isAlpha(key) &&
+        game.wordle.words[game.wordle.current].current < game.wordle.amount
+      ) {
+        game.wordle.words[game.wordle.current].word[
+          game.wordle.words[game.wordle.current].current
+        ].letter = key.toUpperCase();
+        game.wordle.words[game.wordle.current].current++;
+      }
+      if (
+        keyCode == BACKSPACE &&
+        game.wordle.words[game.wordle.current].current > 0
+      ) {
+        game.wordle.words[game.wordle.current].current--;
+        game.wordle.words[game.wordle.current].word[
+          game.wordle.words[game.wordle.current].current
+        ].letter = "";
+      }
+      if (
+        keyCode == ENTER &&
+        game.wordle.words[game.wordle.current].current == game.wordle.amount
+      ) {
+        game.wordle.words[game.wordle.current].checkword().then((data) => {
+          if (data.title != "No Definitions Found") {
+            game.wordle.words[game.wordle.current].flag = true;
+            game.wordle.current++;
+          }
+        });
+      }
     }
-    if (
-      keyCode == BACKSPACE &&
-      game.wordle.words[game.wordle.current].current > 0
-    ) {
-      game.wordle.words[game.wordle.current].current--;
-      game.wordle.words[game.wordle.current].word[
-        game.wordle.words[game.wordle.current].current
-      ].letter = "";
-    }
-    if (
-      keyCode == ENTER &&
-      game.wordle.words[game.wordle.current].current == game.wordle.amount
-    ) {
-      game.wordle.words[game.wordle.current].checkword().then((data) => {
-        if (data.title == "No Definitions Found") {
-          alert("There is no such word!");
-        } else {
-          game.wordle.words[game.wordle.current].flag = true;
-          game.wordle.current++;
-        }
-      });
-    } else if (
-      keyCode == ENTER &&
-      game.wordle.words[game.wordle.current].current != game.wordle.amount
-    ) {
-      alert("Not enough letters");
+  } else {
+    if (!game.hangman.won) {
+      if (isAlpha(key) && game.hangman.letter.letter == "") {
+        game.hangman.letter.letter = key.toUpperCase();
+      }
+      if (keyCode == BACKSPACE && game.hangman.letter.letter != "") {
+        game.hangman.letter.letter = "";
+      }
+      if (keyCode == ENTER && game.hangman.letter.letter != "") {
+        game.hangman.updating();
+        game.hangman.letter.letter = "";
+      }
     }
   }
 }
@@ -432,7 +462,53 @@ function keyClicked() {
   keys.forEach((key) => {
     key.addEventListener("click", () => {
       console.log(key.innerHTML);
-      nowkey = key.innerHTML;
+      let check = key.innerHTML;
+      if (game.whichgame == "wordle") {
+        if (game.wordle.current < game.wordle.rows && !game.wordle.won) {
+          if (
+            isAlpha(check) &&
+            game.wordle.words[game.wordle.current].current < game.wordle.amount
+          ) {
+            game.wordle.words[game.wordle.current].word[
+              game.wordle.words[game.wordle.current].current
+            ].letter = check;
+            game.wordle.words[game.wordle.current].current++;
+          }
+          if (
+            check == "ERASE" &&
+            game.wordle.words[game.wordle.current].current > 0
+          ) {
+            game.wordle.words[game.wordle.current].current--;
+            game.wordle.words[game.wordle.current].word[
+              game.wordle.words[game.wordle.current].current
+            ].letter = "";
+          }
+          if (
+            check == "ENTER" &&
+            game.wordle.words[game.wordle.current].current == game.wordle.amount
+          ) {
+            game.wordle.words[game.wordle.current].checkword().then((data) => {
+              if (data.title != "No Definitions Found") {
+                game.wordle.words[game.wordle.current].flag = true;
+                game.wordle.current++;
+              }
+            });
+          }
+        }
+      } else {
+        if (!game.hangman.won) {
+          if (isAlpha(check) && game.hangman.letter.letter == "") {
+            game.hangman.letter.letter = check;
+          }
+          if (check == "ERASE" && game.hangman.letter.letter != "") {
+            game.hangman.letter.letter = "";
+          }
+          if (check == "ENTER" && game.hangman.letter.letter != "") {
+            game.hangman.updating();
+            game.hangman.letter.letter = "";
+          }
+        }
+      }
     });
   });
 }
