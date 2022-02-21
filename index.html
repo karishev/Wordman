@@ -1,31 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-    <script src="https://cdn.jsdelivr.net/npm/p5@1.4.1/lib/p5.js"></script>
-    <script src="https://code.iconify.design/2/2.1.2/iconify.min.js"></script>
-    <link rel="stylesheet" href="keyboard.css" />
-  </head>
-  <body>
-    <header>WORDMAN</header>
 
-    <div class="buttons">
-      
-      <div class="buttons_relative">
-        <button class="wordleBtn btn active">Wordle</button>
-        <button class="hangBtn btn">Hangman</button>
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
+  <script src="https://cdn.jsdelivr.net/npm/p5@1.4.1/lib/p5.js"></script>
+  <script src="https://code.iconify.design/2/2.1.2/iconify.min.js"></script>
+  <link rel="stylesheet" href="keyboard.css" />
+</head>
+
+<body>
+  <header>WORDMAN</header>
+
+  <div class="openInstructions"><span class="iconify " data-icon="ant-design:question-circle-outlined" data-width="30"></span> </div>
+
+  <div class="buttons">
+    <div class="buttons_relative">
+      <button class="wordleBtn btn active">Wordle</button>
+      <button class="hangBtn btn">Hangman</button>
+    </div>
+  </div>
+  <div id="game"></div>
+  <div class="keyboard">
+    <div class="keyboard__up"></div>
+    <div class="keyboard__mid"></div>
+    <div class="keyboard__down"></div>
+  </div>
+  <div id="instructions">
+    <p>
+      <div class="inctructions__closeBtn">
+        <span class="iconify " data-width="20" data-icon="ep:close"></span>
       </div>
-    </div>
-    <div id="game"></div>
-    <div class="keyboard">
-      <div class="keyboard__up"></div>
-      <div class="keyboard__mid"></div>
-      <div class="keyboard__down"></div>
-    </div>
+      <p
+        style="display:flex; align-items: center; justify-content: center; margin: 0; width: 100%; padding: -10px; font-weight: bold;">
+        Welcome to Wordman!</p> <br> The main objective of the game is to guess the five
+      letter word.<br> In the Wordle part, after entering teh word, the game colors the letters of
+      the word.<br> If the letter is <span style="color: gray; display: inline;">gray</span>, there is no such letter in
+      the word.<br> If
+      the letter is <span style="color: yellow; display: inline;">yellow</span>, there is a letter in the word, but in a
+      different
+      position.<br> If the letter is <span style="color: green; display: inline;">green</span>, the position is the same
+      in given word! <br>
+    </p>
+    <p>In the Hangman part, you enter letters. <br> If the letter is in the given word, it will appear. <br> If not,
+      then there is no such letter in the word. <br>
+      You have only <span style="color: red;">3 attempts</span> in the Hangman part, no matter if the guess was correct
+    </p>
+  </div>
 
-    <script src="sketch.js"></script>
-  </body>
+  <div class="game_btns game__end">
+    <p>You lost! <br> The correct word was: <span class="game__end-correct"></span></p>
+    <button onclick="next_word()">NEXT WORD</button>
+  </div>
+  <div class="game_btns game__won">
+    <p>Great Job! <br> </p>
+    <button onclick="next_word()">NEXT WORD</button>
+  </div>
+
+  <script src="sketch.js"></script>
+</body>
+
 </html>

@@ -26,6 +26,19 @@ let bottomrow = ["ENTER", "Z", "X", "C", "V", "B", "N", "M", "ERASE"];
 let wordleBtn = document.querySelector(".wordleBtn");
 let hangBtn = document.querySelector(".hangBtn");
 
+let instructionsCloseBtn = document.querySelector(".inctructions__closeBtn");
+let instructionsMenu = document.getElementById("instructions");
+let instructionsOpen = document.querySelector(".openInstructions");
+
+let game_over = document.querySelector(".game__end");
+let game_won = document.querySelector(".game__won");
+
+function next_word() {
+  game_over.style.display = "none";
+  game_won.style.display = "none";
+  game.cleaning();
+}
+
 window.addEventListener("load", () => {
   addingList(uprow, keyboard_up);
   addingList(midrow, keyboard_mid);
@@ -43,6 +56,16 @@ hangBtn.addEventListener("click", () => {
   hangBtn.classList.add("active");
   wordleBtn.classList.remove("active");
   game.whichgame = "hangman";
+});
+
+instructionsCloseBtn.addEventListener("click", () => {
+  console.log("sdasd");
+  game.instructions = false;
+  instructionsMenu.style.display = "none";
+});
+
+instructionsOpen.addEventListener("click", () => {
+  game.instructions = true;
 });
 
 function addingList(givenArr, givenDiv) {
@@ -153,6 +176,7 @@ class Hangman {
 
   updating() {
     this.hearts--;
+    if (this.hearts == 0) this.won = true;
     let change = 0;
     let given = document.querySelector(`.${this.letter.letter}`);
     for (let i = 0; i < this.correctWord.length; i++) {
@@ -166,7 +190,6 @@ class Hangman {
       }
     }
     if (change == 0) given.classList.add("gray");
-    if (this.hearts == 0) this.won = true;
   }
 
   cleaning() {
@@ -288,9 +311,7 @@ class Word {
         }
         this.word[i].flag = true;
       }
-      if (countWin == game.amount) {
-        game.checkwin();
-      }
+      game.checkwin();
     }
   }
 
@@ -337,7 +358,7 @@ class Wordle {
 //final game adding wordle and hangman
 
 class Game {
-  constructor(dataset, amount, wordnow) {
+  constructor(dataset, amount, wordnow, instructions) {
     this.dataset = dataset;
     this.wordnow = wordnow;
     this.amount = amount;
@@ -348,6 +369,8 @@ class Game {
     );
     this.whichgame = "wordle";
     this.letters = this.creatingSlots();
+    this.instructions = instructions;
+    this.won = false;
   }
 
   checkwin() {
@@ -356,16 +379,23 @@ class Game {
       if (letter.letter != "") count++;
     });
     if (count == 5) {
-      deleteColor("green");
-      deleteColor("gray");
-      deleteColor("yellow");
-      this.wordnow++;
-      this.wordle.answer = this.dataset[this.wordnow].toUpperCase();
-      this.wordle.cleaning();
-      this.hangman.cleaning();
-      this.hangman.correctWord = this.dataset[this.wordnow].toUpperCase();
-      this.letters = this.creatingSlots();
+      this.showwin();
+    } else if (this.wordle.won && this.hangman.won) {
+      this.showlose();
     }
+  }
+
+  cleaning() {
+    deleteColor("green");
+    deleteColor("gray");
+    deleteColor("yellow");
+    this.won = false;
+    this.wordnow++;
+    this.wordle.answer = this.dataset[this.wordnow].toUpperCase();
+    this.wordle.cleaning();
+    this.hangman.cleaning();
+    this.hangman.correctWord = this.dataset[this.wordnow].toUpperCase();
+    this.letters = this.creatingSlots();
   }
 
   creatingSlots() {
@@ -376,12 +406,32 @@ class Game {
     return letters;
   }
 
+  showinstructions() {
+    let instructions = document.getElementById("instructions");
+    instructions.style.display = "block";
+  }
+
+  showwin() {
+    let game_won = document.querySelector(".game__won");
+    game_won.style.display = "flex";
+  }
+
+  showlose() {
+    let game_end = document.querySelector(".game__end");
+    let correctword = document.querySelector(".game__end-correct");
+    correctword.innerHTML = `${game.wordle.answer}`;
+    game_end.style.display = "flex";
+  }
+
   display() {
     this.letters.forEach((letter) => {
       letter.display();
     });
-    if (this.whichgame == "wordle") this.wordle.display();
-    else this.hangman.display();
+    if (this.instructions) this.showinstructions();
+    else {
+      if (this.whichgame == "wordle") this.wordle.display();
+      else this.hangman.display();
+    }
   }
 }
 
@@ -397,7 +447,7 @@ function setup() {
   getwords().then((data) => {
     dataset = data;
     loading = false;
-    game = new Game(dataset, numOfLettters, 0);
+    game = new Game(dataset, numOfLettters, 0, true);
     var myCanvas = createCanvas(wid, hei);
     myCanvas.parent("game");
   });
@@ -437,6 +487,7 @@ function keyPressed() {
           if (data.title != "No Definitions Found") {
             game.wordle.words[game.wordle.current].flag = true;
             game.wordle.current++;
+            if (game.wordle.current == game.wordle.rows) game.wordle.won = true;
           }
         });
       }
@@ -491,6 +542,8 @@ function keyClicked() {
               if (data.title != "No Definitions Found") {
                 game.wordle.words[game.wordle.current].flag = true;
                 game.wordle.current++;
+                if (game.wordle.current == game.wordle.rows)
+                  game.wordle.won = true;
               }
             });
           }
