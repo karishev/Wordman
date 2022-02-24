@@ -1,0 +1,242 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap");
+
+html {
+  font-family: "Poppins", sans-serif;
+  overflow: hidden;
+}
+body {
+  height: 100vh;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+  flex-direction: column;
+}
+
+/* header */
+header {
+  position: fixed;
+  top: 0;
+  width: 100vw;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  font-weight: bold;
+  line-height: 20px;
+  color: #131113;
+  padding: 0 20px;
+  height: 60px;
+  background: #ffffff;
+  box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.15);
+}
+
+/* opening buttons */
+.openInstructions {
+  position: absolute;
+  right: 20px;
+  top: 14px;
+  z-index: 2;
+}
+
+.openScoreboard {
+  position: absolute;
+  right: 60px;
+  top: 14px;
+  z-index: 2;
+}
+
+/* game */
+#game {
+  margin-top: 70px;
+}
+
+/* keyboard */
+.keyboard {
+  margin-top: 20px;
+  padding-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.key {
+  font-family: "Poppins", sans-serif;
+  font-size: 20px;
+  border-radius: 3px;
+  width: auto;
+  padding: 0 15px;
+  margin: 2px;
+  height: 60px;
+  border: none;
+  background: rgb(92, 91, 91);
+  color: white;
+}
+
+/* buttons */
+.buttons {
+  position: absolute;
+  top: 90px;
+}
+
+.btn {
+  height: 20px;
+  font-size: medium;
+  background: none;
+  border: none;
+}
+
+.btn:hover {
+  cursor: pointer;
+}
+
+.active {
+  background: rgb(202, 194, 194);
+}
+
+.gray {
+  background: rgb(165, 165, 165);
+}
+
+.yellow {
+  background: rgb(233, 190, 0);
+}
+
+.green {
+  background: rgb(87, 172, 87);
+}
+
+/* Instructions */
+#instructions {
+  background: rgb(233, 209, 255);
+  position: absolute;
+  top: 90px;
+  width: 350px;
+  font-size: 14px;
+  flex-direction: column;
+  padding: 0 10px;
+}
+
+.inctructions__closeBtn {
+  position: absolute;
+  right: 10px;
+}
+
+.iconify:hover {
+  cursor: pointer;
+}
+
+/* Scoreboard */
+
+#scoreboard {
+  background: rgb(233, 209, 255);
+  position: absolute;
+  top: 285px;
+  height: 110px;
+  width: 200px;
+  font-size: 14px;
+  flex-direction: column;
+  padding: 0 10px;
+  display: none;
+  justify-content: space-evenly;
+}
+
+#scoreboard > p {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  width: 100%;
+}
+
+.scoreboard__results {
+  font-weight: bold;
+  font-size: 16px;
+}
+.scoreboard__closeBtn{
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}
+
+/* Game buttons */
+.game_btns {
+  background: rgb(233, 209, 255);
+  position: absolute;
+  width: 190px;
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 5px;
+}
+
+.game_btns > p {
+  text-align: center;
+}
+
+.game_btns > button {
+  background: rgb(167, 97, 233);
+  text-align: center;
+  border: none;
+  width: 60%;
+  font-weight: 600;
+  color: whitesmoke;
+  padding: 2px;
+}
+
+/* If the guess was incorrect */
+.game__end {
+  background: rgb(255, 146, 103);
+}
+.game__end > button {
+  background: rgb(255, 68, 62);
+}
+
+/* incorrect word */
+#noword__popup{
+  text-align: center;
+  height: 24px;
+  width: 180px;
+  background: rgb(233, 209, 255);
+  border: 1px solid rgb(167, 97, 233);
+  position: absolute;
+  top: 90px;
+  display: none;
+}
+
+/* making it possible to play on phones */
+@media only screen and (max-width: 600px) {
+  .key {
+    font-size: 15px;
+    border-radius: 3px;
+    width: auto;
+    padding: 12px 11px;
+    margin: 2px;
+    height: 50px;
+  }
+
+  .openScore {
+    position: absolute;
+    left: 20px;
+    top: 14px;
+    z-index: 2;
+  }
+}
+
+@media only screen and (max-width: 400px) {
+  #instructions {
+    font-size: smaller;
+    top: 80px;
+    width: 320px;
+  }
+  .key {
+    font-size: 15px;
+    border-radius: 3px;
+    width: auto;
+    padding: 12px 9px;
+    margin: 2px;
+    height: 50px;
+  }
+}

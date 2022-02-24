@@ -8,26 +8,44 @@
   <title>Document</title>
   <script src="https://cdn.jsdelivr.net/npm/p5@1.4.1/lib/p5.js"></script>
   <script src="https://code.iconify.design/2/2.1.2/iconify.min.js"></script>
-  <link rel="stylesheet" href="keyboard.css" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
   <header>WORDMAN</header>
 
+  <!-- buttons for opening instructions and scoreboard -->
   <div class="openInstructions"><span class="iconify " data-icon="ant-design:question-circle-outlined" data-width="30"></span> </div>
+  <div class="openScoreboard"><span class="iconify" data-icon="ion:podium-outline" data-width="30"></span></div>
 
+  <!-- buttons to move between games -->
   <div class="buttons">
     <div class="buttons_relative">
       <button class="wordleBtn btn active">Wordle</button>
       <button class="hangBtn btn">Hangman</button>
     </div>
   </div>
+  <!-- here is the p5 canvas -->
   <div id="game"></div>
+
+  <!-- creation of the keyboard -->
   <div class="keyboard">
     <div class="keyboard__up"></div>
     <div class="keyboard__mid"></div>
     <div class="keyboard__down"></div>
   </div>
+
+  <!-- scoreboard -->
+  <div id="scoreboard">
+    <div class="scoreboard__closeBtn">
+      <span class="iconify " data-width="20" data-icon="ep:close"></span>
+    </div>
+    <p class="scoreboard__results">Your results</p>
+    <p class="scoreboard__wins">Wins: 0</p>
+    <p class="scoreboard__loses">Loses: 0</p>
+  </div>
+
+  <!-- instructions of the game -->
   <div id="instructions">
     <p>
       <div class="inctructions__closeBtn">
@@ -50,6 +68,10 @@
     </p>
   </div>
 
+  <!-- if the word written by the user doesn't exist -->
+  <div id="noword__popup">No such word!</div>
+
+  <!-- the pop ups if you lose/win -->
   <div class="game_btns game__end">
     <p>You lost! <br> The correct word was: <span class="game__end-correct"></span></p>
     <button onclick="next_word()">NEXT WORD</button>
