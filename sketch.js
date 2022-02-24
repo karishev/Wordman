@@ -580,6 +580,8 @@ function keyPressed() {
               game.wordle.won = true;
               game.checkwin();
             }
+            game.wordle.words[game.wordle.current-1].update(game.wordle.answer);
+            game.checkwin();
           } else { //if there is no such word, then it shoes the pop up that states that there is no such word
             incorrectword.style.display = "block";
             setTimeout(() => {
